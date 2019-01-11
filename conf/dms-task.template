@@ -1,0 +1,60 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": null,
+    "Parameters": {
+      "ReplicationServerARN": {
+          "Default": "REPLICATION_INSTANCE_ARN",
+          "NoEcho": "false",
+          "Description": "Enter ARN of Replication Server to be used",
+          "Type": "String"
+      },
+      "SourceEndpoint": {
+          "Default": "SOURCE_ENDPOINT_ARN",
+          "NoEcho": "false",
+          "Description": "Enter ARN of Source End Point",
+          "Type": "String"
+      },
+      "TargetEndpoint": {
+          "Default": "TARGET_ENDPOINT_ARN",
+          "NoEcho": "false",
+          "Description": "Enter ARN of Target End Point",
+          "Type": "String"
+      }
+    },
+    "Resources": {
+      "TaskNameFromConfig": {
+  			"Type": "AWS::DMS::ReplicationTask",
+  			"Properties": {
+  				"SourceEndpointArn": {"Ref": "SourceEndpoint"},
+          "TargetEndpointArn": {"Ref": "TargetEndpoint"},
+          "ReplicationInstanceArn": {"Ref": "ReplicationServerARN"},
+          "ReplicationTaskIdentifier": "{}",
+          "MigrationType": "{}",
+          "ReplicationTaskSettings": "{}",
+          "TableMappings": null
+        }
+		}
+	},
+    "Outputs": {
+        "StackName": {
+            "Value": {
+                "Ref": "AWS::StackName"
+            }
+        },
+        "Regionname": {
+            "Value": {
+                "Ref": "AWS::Region"
+            }
+        },
+        "SourceEndPoint": {
+            "Value": {
+                "Ref": "SourceEndpoint"
+            }
+        },
+        "TargetEndPoint": {
+            "Value": {
+                "Ref": "TargetEndpoint"
+            }
+        }
+    }
+}

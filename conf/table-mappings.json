@@ -1,0 +1,56 @@
+{
+	"selection":{
+		"rule-type": "selection",
+		"rule-id": null,
+		"rule-name": null,
+		"object-locator": {
+			"schema-name": null,
+			"table-name": null
+		},
+		"rule-action": "include"
+	},
+	"transformation_default":{
+    "rule-type": "transformation",
+    "rule-id": null,
+    "rule-name": null,
+    "rule-target": null,
+    "object-locator": {
+    },
+    "rule-action": null
+  },
+	"transformation":[
+		{
+			"rule-type": "transformation",
+			"rule-id": null,
+			"rule-name": null,
+			"rule-target": "schema",
+			"object-locator": {
+				"schema-name": null
+			},
+			"rule-action": "convert-lowercase"
+		},
+		{
+			"rule-type": "transformation",
+			"rule-id": null,
+			"rule-name": null,
+			"rule-target": "table",
+			"object-locator": {
+				"schema-name": null,
+				"table-name": "%"
+			},
+			"rule-action": "convert-lowercase"
+		},
+		{
+			"rule-type": "transformation",
+			"rule-id": null,
+			"rule-name": null,
+			"rule-target": "column",
+			"object-locator": {
+				"schema-name": null,
+				"table-name": "%",
+				"column-name": "%"
+			},
+			"rule-action": "convert-lowercase"
+		}
+	]
+}
