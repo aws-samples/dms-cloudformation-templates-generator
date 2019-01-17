@@ -45,7 +45,7 @@ python create_task.py --path dms-tasks.xlsx --type cdc
 The above sample command generates two AWS CloudFormation templates i.e. DMS-CHILD.template and DMS-PARENT.template in the **output** subfolder of this tool's root folder.
 
 ## License
-Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
 software and associated documentation files (the "Software"), to deal in the Software
