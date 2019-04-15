@@ -90,7 +90,7 @@ python startTasks.py <csvpath>
 
 ## Authors
 
-* **Naveen Koppula**
+* ****
 
 
 ## License
