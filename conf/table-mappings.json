@@ -7,14 +7,14 @@
 			"schema-name": null,
 			"table-name": null
 		},
-		"rule-action": "include"
+		"rule-action": null
 	},
 	"transformation_default":{
-    "rule-type": "transformation",
-    "rule-id": null,
-    "rule-name": null,
-    "rule-target": null,
-    "object-locator": {
+		"rule-type": "transformation",
+		"rule-id": null,
+		"rule-name": null,
+		"rule-target": null,
+		"object-locator": {
     },
     "rule-action": null
   },

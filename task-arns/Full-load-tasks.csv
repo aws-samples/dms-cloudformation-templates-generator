@@ -1,0 +1,7 @@
+taskName,taskARN
+FullLoadTask,arn:aws:dms:ap-south-1:951590926382:task:UATVCIYKE4SHNEJQYRF7R6COEE
+FullLoadTask1,arn:aws:dms:ap-south-1:951590926382:task:IJJDDKXBMRRHQIDJHDZEV6JOLE
+FullLoadTask2,arn:aws:dms:ap-south-1:951590926382:task:Y446FRELS3V227L44DBGJYY5QA
+FullLoadTask3,arn:aws:dms:ap-south-1:951590926382:task:SRNZNO22FSHZIAPMGEMNSGKZ6U
+FullLoadTask4,arn:aws:dms:ap-south-1:951590926382:task:VM6N4QO6VC37BMQINFQVXFYIQQ
+FullLoadTask5,arn:aws:dms:ap-south-1:951590926382:task:GKLB4E72B6PSEOYZDMQA644BM4

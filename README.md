@@ -1,7 +1,8 @@
-# Create AWS CloudFormation templates for AWS DMS tasks using Microsoft Excel
+# Cloud Formation Template Generator
 
+This is useful to generate CloudFormation templates for aws resources. 
 
-This is a small command line tool written in Python language that takes an MS Excel workbook having names of tables to be migrated, Amazon Resource Names (ARNs) of DMS Endpoints and DMS Replication Instances to be used as input and generates required DMS tasks’ AWS CloudFormation templates as output. Creation of DMS Endpoints and Replication instances is not addressed by this tool.
+Currently We support only aws DMS replication tasks by taking csv as input.
 
 ### Prerequisites
 
@@ -11,51 +12,85 @@ Python 2.7 and above
 https://www.python.org/downloads/
 ```
 
-### Installing XLRD Python module
+### Installing
 
-Tool depends on XLRD Python module, if not already installed proceed to install using PIP as mentioned below.
 
 ```
-pip install xlrd
+git clone ssh://git.amazon.com/pkg/Cloud-formation-generator
 ```
 
 ## Usage
 
 ```
-python create_task.py --path [PATH_OF_THE_MS_EXCEL_TEMPLATE] --type [cdc | full-load | full-load-and-cdc]
+usage: cf-generator.py [-h] --path PATH --type
+                       {cdc,full-load,full-load-and-cdc}
+```
+## Running code
+
+```
+python cf-generator.py --path=<full path csv> --type=<cdc/full-load/full-load-and-cdc>
 
 ```
 
-## Input arguments
+## Input Parameters definition
 
 | Name | Description | Required|
 | :---- |:----------- |:--------|
-|path|Location of the MS Excel template comprising DMS tasks details whose AWS CloudFormation templates needs to be generated.| True |
-|type|This argument accepts three different values <br> **cdc** – If the DMS tasks to be created are for Change Data Capture mode only <br>**full-load** – If the DMS tasks to be created are for FULL-LOAD mode only<br>**full-load-and-cdc** – If the DMS tasks to be created are for both FULL-LOAD followed by CDC | True |
+| SelectionType | include/exclude of a table to a task under selection rule| True |
+|TaskName|Name of a task can be duplicated as a task may have multiple include/exclude selection rules| True |
+|TaskDescription|Task description | False |
+| SchemaName | Schema name to include. this is used in both selection and transformation rules, % is used to include all schemas | True|
+| TableName | Tables to include/exclude, % is used to include all tables | True |
+| ExcludeColumns | Exclude columns in table. Multiple columns are separated by comma | False |
+|FilterColumn | Key column name to add column filter in selection rules, Composite keys are not supported yet | FAlse |
+| FilterCondition | Condition to add to column filter (ste/gte/eq/between) | False |
+| StartValue | Condition start value or only value when we use gte/ste and eq | False |
+| EndValue | Condition End Value only required if we use between | False |
+| CdcStartTime | CDC Task start time or SCN number | False |
+| taskPrepMode | DO_NOTHING/ DROP_AND_CREATE/ TRUNCATE_BEFORE_LOAD | True |
+| maxSubTasks | Number of threads in parallel. Default is 8 | False | 
+| lobMode | Enable Lob for a task TRUE/FALSE. Default FALSE | FALSE |
+| fullLob | Enable full lob mode TRUE/FALSE. Default False | False |
+|chunkSize| Max LOB size or Lob Chunk Size based on fullLob setting | False|
+| validation | TRUE/FALSE Default FALSE | FALSE |
+| sourceARN | Source end point ARN | TRUE |
+| targetARN | Target end point ARN | TRUE |
+| repARN | Replicatoin Instance ARN| TRUE |
+| ChangeProcessingDdlHandlingPolicy | Controls DDL changes from DMS, Default False| False |
+| logging | Enable Logging, Default True| False |
+| batchApplyEnabled | Batch Apply, Default False| False || stop_task_with_cache |  Stop a task after a full load completes and cached changes are applied TRUE/FALSE Default FALSE | FALSE |
+| stop_task_without_cache | Stop a task before cached changes are applied TRUE/FALSE Default FALSE | FALSE |
+| controlSchema | Database schema name for the AWS DMS target Control Tables | False |
+| enableHistoryTable | This table provides information about replication history TRUE/FALSE Default FALSE | FALSE |
+| enableSuspendTable | This table provides a list of suspended tables TRUE/FALSE Default FALSE | FALSE |
+| enableStatusTable | This table provides details about the current task TRUE/FALSE Default FALSE | FALSE |
 
-## Illustration
 
-Run the below mentioned command with the provided sample arguments to generate sample AWS CloudFormation templates of two DMS tasks i.e. DMS-CHILD and DMS-PARENT that are mentioned in the attached sample MS Excel workbook (dms-tasks.xlsx).
+
+Note: No Validation on csv file yet.
+
+
+### Module to run tasks
+
+#### Describe Stacks
+
+To get task ARNs from CloudFormation template to start tasks using cli, output will be saved in csv file.
 
 ```
-python create_task.py --path dms-tasks.xlsx --type cdc
-
+python describeStacks.py --stackName=<stackName>
 ```
 
-The above sample command generates two AWS CloudFormation templates i.e. DMS-CHILD.template and DMS-PARENT.template in the **output** subfolder of this tool's root folder.
+#### Run Replication Tasks
+
+Takes csv file as input which has task arns
+
+```
+python startTasks.py <csvpath>
+```
+
+## Authors
+
+* **Naveen Koppula**
+
 
 ## License
-Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this
-software and associated documentation files (the "Software"), to deal in the Software
-without restriction, including without limitation the rights to use, copy, modify,
-merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
