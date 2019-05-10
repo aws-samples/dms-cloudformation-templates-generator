@@ -1,0 +1,14 @@
+{
+    "Type": "AWS::DMS::ReplicationTask",
+    "Properties": {
+        "SourceEndpointArn": {"Ref": "SourceEndpoint"},
+        "TargetEndpointArn": {"Ref": "TargetEndpoint"},
+        "ReplicationInstanceArn": {"Ref": "ReplicationServerARN"},
+        "ReplicationTaskIdentifier": "{}",
+        "MigrationType": "{}",
+        "ReplicationTaskSettings": null,
+        "TableMappings": null,
+        "Tags": [
+        ]
+    }
+}
