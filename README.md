@@ -16,7 +16,7 @@ https://www.python.org/downloads/
 
 
 ```
-git clone ssh://git.amazon.com/pkg/Cloud-formation-generator
+git clone git@github.com:aws-samples/dms-cloudformation-templates-generator.git
 ```
 
 ## Usage
