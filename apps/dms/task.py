@@ -1,3 +1,20 @@
+#
+# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this
+# software and associated documentation files (the "Software"), to deal in the Software
+# without restriction, including without limitation the rights to use, copy, modify,
+# merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+# PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+
 import re
 import copy
 import json
@@ -102,30 +119,30 @@ def create(name, description, task_sheet, migration_type='full-load', source_arn
     schemas = set()
     rename_trans_rules = list()
     for row in task_sheet:
-        schema_name = row.get('SchemaName')
+        schema_name = row.get('schemaName')
         schemas.add(schema_name)
-        table_name = row.get('TableName')
+        table_name = row.get('tableName')
 
-        exclude_columns_list = row.get('ExcludeColumns','').split(',')
+        exclude_columns_list = row.get('excludeColumns','').split(',')
         exclude_columns = []
-        if row.get('ExcludeColumns'):
-            exclude_columns = map(unicode.strip, exclude_columns_list)
+        if row.get('excludeColumns'):
+            exclude_columns = map(str.strip, exclude_columns_list)
         table_json_op = copy.deepcopy(selection_json)
 
         table_json_op['rule-id'] = i
         table_json_op['rule-name'] = i
-        table_json_op['rule-action'] = row.get("SelectionType","include")
+        table_json_op['rule-action'] = row.get("selectionType","include")
         table_json_op['object-locator']['schema-name'] = schema_name
         table_json_op['object-locator']['table-name'] = table_name
-        filter_column = row.get('FilterColumn')
+        filter_column = row.get('filterColumn')
         if filter_column:
-            table_json_op['filters'] = [form_condition(filter_column,row.get('FilterCondition'),
-                                            row.get('StartValue'),
-                                            row.get('EndValue'))]
+            table_json_op['filters'] = [form_condition(filter_column,row.get('filterCondition'),
+                                            row.get('startValue'),
+                                            row.get('endValue'))]
 
         rules['rules'].append(table_json_op)
 
-        if dbPath and row.get("SelectionType", "include") == 'include':
+        if dbPath and row.get("selectionType", "include") == 'include':
             from index_pre_processing import inset_record
             inset_record(dbPath, task_identifier, schema_name, table_name)
 

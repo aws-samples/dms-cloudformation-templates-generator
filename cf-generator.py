@@ -1,5 +1,20 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+#
+# Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this
+# software and associated documentation files (the "Software"), to deal in the Software
+# without restriction, including without limitation the rights to use, copy, modify,
+# merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+# PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+
 import os
 import re
 import json
@@ -7,7 +22,7 @@ import argparse
 
 from settings import BASE_DIR, PARAMETERS
 from apps.common import add_outputs, read_csv
-from apps.dms import create_task, task_settings
+from apps.dms import create_task, task_settings, get_boolean_value
 
 
 def generate_template(file_path, migration_type, dbPath=None):
@@ -24,35 +39,36 @@ def generate_template(file_path, migration_type, dbPath=None):
         if not task_name:
             continue
         params = {
-            "source_arn" : task_info.get('sourceARN',None),
-            "target_arn" : task_info.get('targetARN',None),
-            "replica_arn" : task_info.get('repARN',None),
-            "migration_type" : migration_type,
-            "target_prep_mode" : task_info.get('taskPrepMode', 'DO_NOTHING'),
-            "max_sub_tasks" : task_info.get('maxSubTasks',8),
-            "support_lobs" : task_info.get('lobMode',False),
-            "full_lob_mode" : task_info.get('fullLob',False),
-            "lob_chunk_size" : task_info.get('chunkSize',32),
-            "validation":task_info.get('validation',False),
-            "ChangeProcessingDdlHandlingPolicy": task_info.get('ChangeProcessingDdlHandlingPolicy', 'FALSE'),
-            "logging": task_info["logging"],
-            "BatchApplyEnabled": task_info["batchApplyEnabled"],
-            "StopTaskCachedChangesApplied": task_info.get('stop_task_with_cache', False),
-            "StopTaskCachedChangesNotApplied": task_info.get('stop_task_without_cache', False),
-            "enable_history_table": task_info.get('enable_history_table'),
-            "enable_suspend_table": task_info.get('enable_suspend_table'),
-            "enable_status_table": task_info.get('enable_status_table'),
-            "control_schema": task_info.get('control_schema')
+            "source_arn": task_info.get('sourceARN', None),
+            "target_arn": task_info.get('targetARN', None),
+            "replica_arn": task_info.get('repARN', None),
+            "migration_type": migration_type,
+            "target_prep_mode": task_info.get('taskPrepMode', 'DO_NOTHING'),
+            "max_sub_tasks": task_info.get('maxSubTasks', 8),
+            "support_lobs": get_boolean_value(task_info.get('lobMode')),
+            "full_lob_mode": get_boolean_value(task_info.get('fullLob')),
+            "lob_chunk_size": task_info.get('chunkSize',32),
+            "validation": get_boolean_value(task_info.get('validation')),
+            "ChangeProcessingDdlHandlingPolicy": get_boolean_value(task_info.get('changeProcessingDdlHandlingPolicy')),
+            "logging": get_boolean_value(task_info.get("logging", "TRUE")),
+            "BatchApplyEnabled": get_boolean_value(task_info.get("batchApplyEnabled")),
+            "StopTaskCachedChangesApplied": get_boolean_value(task_info.get('stopTaskWithCache')),
+            "StopTaskCachedChangesNotApplied": get_boolean_value(task_info.get('stopTaskWithOutCache')),
+            "enable_history_table": get_boolean_value(task_info.get('enableHistoryTable')),
+            "enable_suspend_table": get_boolean_value(task_info.get('enableSuspendTable')),
+            "enable_status_table": get_boolean_value(task_info.get('enableStatusTable')),
+            "control_schema": task_info.get('controlSchema','')
         }
-        if migration_type != 'full-load' and task_info.get('CdcStartTime'): params["cdc_start_time"] = int(task_info.get('CdcStartTime'))
-        
-        template_contents = create_task(task_name, task_info.get('description'
+        if migration_type != 'full-load' and task_info.get('cdcStartTime'): params["cdc_start_time"] = int(task_info.get('cdcStartTime'))
+
+        template_contents = create_task(task_name, task_info.get('taskDescription'
                     ), task_info.get('data'), dbPath=dbPath, **params)
         task_name = re.sub(r"[^a-zA-Z0-9]", '', task_name)
-        template['Resources'][task_name]=template_contents
+        template['Resources'][task_name] = template_contents
     template['Outputs'] = add_outputs(template["Resources"])
     with open(os.path.join(BASE_DIR, 'output',  os.path.basename(file_path).split('.')[0] + '.json'), 'w'
               ) as writefile:
+        print("Created Template : %s" % os.path.join(BASE_DIR, 'output',  os.path.basename(file_path).split('.')[0] + '.json'))
         json.dump(template, writefile)
 
 
