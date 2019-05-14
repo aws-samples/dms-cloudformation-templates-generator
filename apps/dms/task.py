@@ -161,6 +161,7 @@ def create(name, description, task_sheet, migration_type='full-load', source_arn
             exc_json_op['object-locator']['column-name'] = exclude_column
             exc_json_op['rule-action'] = 'remove-column'
             rules['rules'].append(exc_json_op)
+            i += 1
         
         if row.get('renameTable', None):
             exc_json_op = copy.deepcopy(transformation_default_json)
