@@ -66,6 +66,8 @@ def generate_template(file_path, migration_type, dbPath=None):
         task_name = re.sub(r"[^a-zA-Z0-9]", '', task_name)
         template['Resources'][task_name] = template_contents
     template['Outputs'] = add_outputs(template["Resources"])
+    if not os.path.exists(os.path.join(BASE_DIR, 'output')):
+        os.mkdir(os.path.join(BASE_DIR, 'output'))
     with open(os.path.join(BASE_DIR, 'output',  os.path.basename(file_path).split('.')[0] + '.json'), 'w'
               ) as writefile:
         print("Created Template : %s" % os.path.join(BASE_DIR, 'output',  os.path.basename(file_path).split('.')[0] + '.json'))
