@@ -25,7 +25,7 @@ from apps.dms.utils import form_condition
 
 
 def create(name, description, task_sheet, migration_type='full-load', source_arn=None,
-           target_arn=None, replica_arn=None, tags=None, cdc_start_time=None, dbPath=None,
+           target_arn=None, replica_arn=None, tags=None, dbPath=None,
            **extra_args):
     i = 1  # counter for rule-id
     task_name = re.sub(r"[^a-zA-Z0-9]", '', name)
@@ -136,9 +136,9 @@ def create(name, description, task_sheet, migration_type='full-load', source_arn
         table_json_op['object-locator']['table-name'] = table_name
         filter_column = row.get('filterColumn')
         if filter_column:
-            table_json_op['filters'] = [form_condition(filter_column,row.get('filterCondition'),
+            table_json_op['filters'] = form_condition(filter_column,row.get('filterCondition'),
                                             row.get('startValue'),
-                                            row.get('endValue'))]
+                                            row.get('endValue'))
 
         rules['rules'].append(table_json_op)
 
@@ -197,7 +197,12 @@ def create(name, description, task_sheet, migration_type='full-load', source_arn
 
     # Add CDCStartTime if applicable
 
-    if cdc_start_time:
-        op_template['Properties']['CdcStartTime'] = cdc_start_time
+    if extra_args['cdcStartPosition']:
+        op_template['Properties']['CdcStartPosition'] = extra_args['cdcStartPosition']
+    elif extra_args['cdcStartTime']:
+        op_template['Properties']['CdcStartTime'] = extra_args['cdcStartTime']
+
+    if extra_args['cdcStopPosition']:
+        op_template['Properties']['CdcStopPosition'] = extra_args['cdcStopPosition']
 
     return op_template
