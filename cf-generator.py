@@ -57,7 +57,10 @@ def generate_template(file_path, migration_type, dbPath=None):
             "enable_history_table": get_boolean_value(task_info.get('enableHistoryTable')),
             "enable_suspend_table": get_boolean_value(task_info.get('enableSuspendTable')),
             "enable_status_table": get_boolean_value(task_info.get('enableStatusTable')),
-            "control_schema": task_info.get('controlSchema','')
+            "control_schema": task_info.get('controlSchema',''),
+            "cdcStartPosition": task_info.get('cdcStartPosition', None),
+            "cdcStartTime": task_info.get('cdcStartTime', None),
+            "cdcStopPosition": task_info.get('cdcStopPosition', None)
         }
         if migration_type != 'full-load' and task_info.get('cdcStartTime'): params["cdc_start_time"] = int(task_info.get('cdcStartTime'))
 

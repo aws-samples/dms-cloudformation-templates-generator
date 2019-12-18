@@ -1,0 +1,2 @@
+Sl no,selectionType,taskName,taskDescription,schemaName,tableName,excludeColumns,filterColumn,filterCondition,startValue,endValue,cdcStartPosition,cdcStopPosition,cdcStartTime,taskPrepMode,maxSubTasks,lobMode,fullLob,chunkSize,validation,sourceARN,targetARN,repARN,changeProcessingDdlHandlingPolicy,logging,enableBatchApply,stopTaskWithCache,stopTaskWithOutCache,enableHistoryTable,enableSuspendTable,enableStatusTable,controlSchema
+1,include,CDC-Task-Temp,,DMS_SAMPLE,%,,,,,,1410002002,,141490901,DO_NOTHING,8,,,,,,,,,TRUE,,,,,,,

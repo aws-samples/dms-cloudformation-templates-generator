@@ -15,6 +15,7 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+
 def process_task_data(data_dict):
     """
     Process the data and return dict with AWS DMS Task Name as key.
@@ -62,17 +63,37 @@ def get_boolean_value(data):
     return False
 
 
-def form_condition(col,condition,start_value=None,end_value=None):
+def form_condition(column, condition, start_value=None, end_value=None):
     """
-    Return Filter Condition for column in AWS DMS Replication Task.
+    Return Filter Condition for column (Composite key is seperated by : )in AWS DMS Replication Task.
     """
 
-    filter_dict = {'filter-type': 'source', 'column-name': col,
-                   'filter-conditions': [{'filter-operator': condition}]}
+    results = list()
+    # Composite Key Filter
+    cols = column.split('&')
+    conditions = condition.split('&')
+    start_values = start_value.split('&')
+    end_values = end_value.split('&')
 
-    if condition == 'between':
-        filter_dict['filter-conditions'][0]['start-value'] = str(start_value)
-        filter_dict['filter-conditions'][0]['end-value'] = str(end_value)
-    else:
-        filter_dict['filter-conditions'][0]['value'] = str(start_value)
-    return filter_dict
+    for i, col in enumerate(cols):
+        if not col:
+            continue
+        cond_dict = {
+            'filter-type': 'source',
+            'column-name': col,
+            'filter-conditions':
+                [
+                    {
+                        'filter-operator': conditions[i]
+                    }
+                ]
+        }
+
+        if conditions[i] == 'between':
+            cond_dict['filter-conditions'][0]['start-value'] = str(start_values[i])
+            cond_dict['filter-conditions'][0]['end-value'] = str(end_values[i])
+        else:
+            cond_dict['filter-conditions'][0]['value'] = str(start_values[i])
+        results.append(cond_dict)
+    return results
+
