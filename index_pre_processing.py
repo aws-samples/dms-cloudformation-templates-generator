@@ -39,7 +39,7 @@ def execute(path):
 
     # Table Stats Table
     c.execute('''
-        create table table_stats(
+        create table table_status(
             id integer primary key autoincrement,
             schema_name VARCHAR(256),
             table_name VARCHAR(256),
