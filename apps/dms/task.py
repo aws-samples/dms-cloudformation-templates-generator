@@ -21,7 +21,7 @@ import json
 
 from settings import DMS_TASK_PARAMS, TABLE_MAPPINGS
 
-from apps.dms.utils import form_condition
+from apps.dms.utils import form_condition, get_boolean_value
 
 
 def create(name, description, task_sheet, migration_type='full-load', source_arn=None,
@@ -116,8 +116,10 @@ def create(name, description, task_sheet, migration_type='full-load', source_arn
     TABLE_MAPPINGS_TEMP = copy.deepcopy(TABLE_MAPPINGS)
     selection_json = TABLE_MAPPINGS_TEMP['selection']
     transformation_default_json = TABLE_MAPPINGS_TEMP['transformation_default']
+    transformation_propagation_default_json = TABLE_MAPPINGS_TEMP['transformation_propagation_default']
     schemas = set()
     rename_trans_rules = list()
+    propogation_rules = list()
     for row in task_sheet:
         schema_name = row.get('schemaName')
         schemas.add(schema_name)
@@ -173,6 +175,16 @@ def create(name, description, task_sheet, migration_type='full-load', source_arn
             exc_json_op['value'] = row['renameTable']
             rename_trans_rules.append(exc_json_op)
 
+        if get_boolean_value(row.get('propagation')):
+            exc_json_op = copy.deepcopy(transformation_propagation_default_json)
+            exc_json_op['rule-type'] = 'table-settings'
+            exc_json_op['object-locator']['schema-name'] = schema_name
+            exc_json_op['object-locator']['table-name'] = table_name
+            exc_json_op['parallel-load'] = {
+                "type": "partitions-auto"
+            }
+            propogation_rules.append(exc_json_op)
+
     for sc in schemas:
         for trans_rule in TABLE_MAPPINGS_TEMP['transformation']:  # Adding transformation rules to task
             trans_rule_temp = copy.deepcopy(trans_rule)
@@ -183,6 +195,12 @@ def create(name, description, task_sheet, migration_type='full-load', source_arn
             i += 1
     if len(rename_trans_rules) > 0:
         for r in rename_trans_rules:
+            r['rule-id'] = i
+            r['rule-name'] = i
+            i += 1
+            rules["rules"].append(r)
+    if len(propogation_rules) > 0:
+        for r in propogation_rules:
             r['rule-id'] = i
             r['rule-name'] = i
             i += 1
