@@ -60,7 +60,7 @@ def generate_template(file_path, migration_type, dbPath=None):
             "control_schema": task_info.get('controlSchema',''),
             "cdcStartPosition": task_info.get('cdcStartPosition', None),
             "cdcStartTime": task_info.get('cdcStartTime', None),
-            "cdcStopPosition": task_info.get('cdcStopPosition', None)
+            "cdcStopPosition": task_info.get('cdcStopPosition', None),
         }
         if migration_type != 'full-load' and task_info.get('cdcStartTime'): params["cdc_start_time"] = int(task_info.get('cdcStartTime'))
 

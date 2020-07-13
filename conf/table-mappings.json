@@ -15,9 +15,16 @@
 		"rule-name": null,
 		"rule-target": null,
 		"object-locator": {
-    },
-    "rule-action": null
-  },
+    	},
+    	"rule-action": null
+	},
+	"transformation_propagation_default":{
+		"rule-type": "transformation",
+		"rule-id": null,
+		"rule-name": null,
+		"object-locator": {
+    	}
+	},
 	"transformation":[
 		{
 			"rule-type": "transformation",
